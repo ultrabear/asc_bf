@@ -5,3 +5,6 @@ edition = "2024"
 
 [profile.release]
 lto = "thin"
+
+[dependencies]
+memmap2 = "0.9.8"

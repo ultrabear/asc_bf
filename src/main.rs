@@ -135,15 +135,17 @@ fn to_bf<W: Write>(compiled: &HashMap<i16, String>, asc: &[u8], out: &mut W) -> 
 fn main() -> io::Result<()> {
     let start = Instant::now();
 
-    let data = std::fs::read(
+    let fp = std::fs::File::open(
         std::env::args()
             .nth(1)
             .ok_or(io::Error::other("missing filename"))?,
     )?;
 
+    let data = unsafe { memmap2::Mmap::map(&fp)? };
+
     let compiled = summations();
 
-    to_bf(&compiled, &data, &mut std::io::stdout().lock())?;
+    to_bf(&compiled, &*data, &mut std::io::stdout().lock())?;
 
     eprintln!("completed in: {:?}", start.elapsed());
 
